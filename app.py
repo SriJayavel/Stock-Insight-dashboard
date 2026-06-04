@@ -8,4 +8,19 @@ info = stock.info
 st.subheader("Company Information")
 st.write(f"Name: {info.get('longName', 'N/A')}")
 st.write(f"Current Price: ₹{info.get('currentPrice', 'N/A')}")
-tricker = st.text_input("Enter Stock Ticker", value="RELIANCE.NS")
+ticker = st.text_input("Enter Stock Symbol", value="RELIANCE")
+ticker = ticker.upper() + ".NS"
+info.get('Current Price', 'N/A')
+if ticker:
+    stock = yf.Ticker(ticker)
+    info = stock.info
+    st.subheader("Company Information")
+    st.write(f"Name: {info.get('longName', 'N/A')}")
+    st.write(f"Current Price: ₹{info.get('currentPrice', 'N/A')}")
+    st.write(f"Market Cap: ₹{info.get('marketCap', 'N/A')}")
+    st.write(f"PE Ratio: {info.get('trailingPE', 'N/A')}")
+    st.write(f"Day High: ₹{info.get('dayHigh', 'N/A')}")
+    st.write(f"Day Low: ₹{info.get('dayLow', 'N/A')}")
+    st.write(f"52 Week High: ₹{info.get('fiftyTwoWeekHigh', 'N/A')}")
+    st.write(f"52 Week Low: ₹{info.get('fiftyTwoWeekLow', 'N/A')}")
+
