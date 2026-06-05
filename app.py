@@ -27,6 +27,20 @@ if ticker:
     st.metric("Day Low", f"₹{info.get('dayLow', 'N/A')}")
     st.metric("52 Week High", f"₹{info.get('fiftyTwoWeekHigh', 'N/A')}")
     st.metric("52 Week Low", f"₹{info.get('fiftyTwoWeekLow', 'N/A')}") 
+
+investment_return_calculator = st.sidebar.expander("Investment Return Calculator")
+with investment_return_calculator:
+    st.subheader("Calculate Investment Returns")
+    initial_investment = st.number_input("Initial Investment (₹)", min_value=0.0, value=10000.0)
+    annual_return_rate = st.number_input("Expected Annual Return Rate (%)", min_value=0.0, value=10.0)
+    investment_duration = st.number_input("Investment Duration (Years)", min_value=1, value=5)
+    if st.button("Calculate"):
+        future_value = initial_investment * ((1 + annual_return_rate / 100) ** investment_duration)
+        st.write(f"Future Value of Investment: ₹{future_value:,.2f}")
+        effective_annual_return = ((future_value / initial_investment) ** (1 / investment_duration) - 1) * 100
+        st.write(f"Effective Annual Return: {effective_annual_return:.2f}%")
+    else:
+        st.write("Enter the details and click 'Calculate' to see the results.")
     
 
     
