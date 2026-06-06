@@ -18,16 +18,26 @@ if ticker:
     period = st.selectbox("Select Time Period", ["1d", "5d", "1mo", "3mo", "6mo", "1y"])
     history = stock.history(period=period)
     st.line_chart(history['Close'])
+    market_cap = info.get('marketCap', 0)
+    if market_cap >= 1_000_000_000_000:
+        value = f"{market_cap / 1_000_000_000_000:.2f} Trillion"
+    elif market_cap >= 1_000_000_000:
+        value = f"{market_cap / 1_000_000_000:.2f} Billion" 
+    elif market_cap >= 1_000_000:
+        value = f"{market_cap / 1_000_000:.2f} Million"
+    else:
+        value = f"{market_cap}"
+
     st.subheader("Key Metrics")
     col1, col2, col3 = st.columns(3)
     with col1:
         st.metric("Current Price", f"₹{info.get('currentPrice', 'N/A')}")
-        st.metric("Market Cap", f"₹{info.get('marketCap', 'N/A')}")
+        st.metric("Market Cap", f"₹{value}")
     with col2:
         st.metric("Day High", f"₹{info.get('dayHigh', 'N/A')}")
         st.metric("Day Low", f"₹{info.get('dayLow', 'N/A')}") 
     with col3:
-        st.metric("PE Ratio", info.get('trailingPE', 'N/A'))
+        st.metric("PE Ratio", f"{pe_ratio:.2f}" if (pe_ratio := info.get('trailingPE')) is not None else "N/A")
         st.metric("52 Week High", f"₹{info.get('fiftyTwoWeekHigh', 'N/A')}")
         st.metric("52 Week Low", f"₹{info.get('fiftyTwoWeekLow', 'N/A')}") 
 
@@ -48,7 +58,7 @@ st.header("Company Overview")
 st.write(f"Company: {info.get('longName', 'N/A')}")
 st.write(f"Sector: {info.get('sector', 'N/A')}")
 st.write(f"Industry: {info.get('industry', 'N/A')}")
-st.write(f"Description: {info.get('SmallBusinessSummary', 'N/A')}")  
+st.write(f"Description: {info.get('longBusinessSummary', 'N/A')}")  
 
 
     
