@@ -7,8 +7,13 @@ ticker = ticker.upper() + ".NS"
 stock = yf.Ticker(ticker)
 info = stock.info
 st.subheader("Company Information")
-st.metric("Name", info.get('longName', 'N/A'))
-
+st.metric("Name", info.get('longName', 'N/A'))  
+company= info.get('longName')   
+if company is None:
+    st.error("Invalid stock symbol. Please enter a valid symbol.")
+else:
+    # Display company information
+    st.write(f"Company: {company}")
 
 if ticker:
     stock = yf.Ticker(ticker)
