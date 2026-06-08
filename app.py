@@ -1,6 +1,9 @@
 import streamlit as st
 import yfinance as yf
 
+# Set page configuration
+st.set_page_config(page_title="Stock Insight Dashboard", layout="wide")
+
 st.title("Stock Insight Dashboard")
 ticker = st.text_input("Enter Stock Symbol", value="RELIANCE")
 ticker = ticker.upper() + ".NS"
@@ -15,6 +18,7 @@ else:
     # Display company information
     st.write(f"Company: {company}")
 
+# Display stock price history and key metrics
 if ticker:
     stock = yf.Ticker(ticker)
     info = stock.info
@@ -45,7 +49,18 @@ if ticker:
         st.metric("PE Ratio", f"{pe_ratio:.2f}" if (pe_ratio := info.get('trailingPE')) is not None else "N/A")
         st.metric("52 Week High", f"₹{info.get('fiftyTwoWeekHigh', 'N/A')}")
         st.metric("52 Week Low", f"₹{info.get('fiftyTwoWeekLow', 'N/A')}") 
+#STOCK COMPARISON
+st.header("Stock Comparison")
+tickers = st.multiselect("Select Stock Symbols to Compare", options=["RELIANCE", "TCS", "INFY", "HDFCBANK", "ICICIBANK"], default=["RELIANCE", "TCS"])
+if tickers:
+    data = yf.download([ticker + ".NS" for ticker in tickers], period="1y")['Close']
+    st.line_chart(data)
+    st.write("Selected Stocks: " + ", ".join(tickers))
+    st.write("Comparison of stock price trends over the past year.")
 
+    
+
+#Investment Return Calculator
 investment_return_calculator = st.sidebar.expander("Investment Return Calculator")
 with investment_return_calculator:
     st.subheader("Calculate Investment Returns")
