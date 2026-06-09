@@ -18,11 +18,11 @@ A dashboard that allows users to analyze data, visualize trends, and gain simple
 - Error Handling
 
 ## Screenshots
-![alt text](<Screenshot (134).png>)
-![alt text](<Screenshot (135).png>)
-![alt text](<Screenshot (136).png>)
-![alt text](<Screenshot (137).png>)
-![alt text](<Screenshot (138).png>)
+![alt text](Mainpage.png)
+![alt text](StockHistory.png)
+![alt text](<matrix keys.png>)
+![alt text](Multi-compare-stock.png)
+![alt text](overview-comp.png)
 
 ## Future Improvements
 - Seach bar suggestion
