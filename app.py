@@ -2,6 +2,7 @@ import streamlit as st
 import yfinance as yf
 import pandas as pd
 companies = pd.read_csv("companies.csv")
+
 # Set page configuration
 st.set_page_config(page_title="Stock Insight Dashboard", layout="wide")
 st.title("Stock Insight Dashboard")
@@ -10,7 +11,9 @@ st.title("Stock Insight Dashboard")
 search = st.text_input("Search Company Name")
 
 matches = companies[
-    companies["NAME OF COMPANY"].str.contains(search, case=False, na=False)]
+    companies["NAME OF COMPANY"].str.contains(search, case=False, na=False) | 
+    companies["SYMBOL"].str.contains(search, case=False, na=False)
+]
 if not matches.empty:
    selected_company = st.selectbox("Select a Company",matches["NAME OF COMPANY"].head(10)
    )
@@ -24,14 +27,27 @@ stock = yf.Ticker(ticker)
 info = stock.info
 ticker = None
 st.subheader("Company Information")
-st.metric("Name", info.get('longName', 'N/A'))  
-company= info.get('longName')  
+st.metric("Name", info.get('longName', 'N/A')) 
 
-if company is None:
-    st.error("Invalid stock symbol. Please enter a valid symbol.")
+#Stock History
+
+history = stock.history(period="1y")
+period = st.selectbox("Select Time Period", ["1d", "5d", "1mo", "3mo", "6mo", "1y"])
+if period=="1d":
+    history = stock.history(period="1d", interval="5m")
+elif period=="5d":
+    history = stock.history(period="5d", interval="1h")
+elif period=="1mo":
+    history = stock.history(period="1mo", interval="1d")
+elif period=="3mo":
+    history = stock.history(period="3mo", interval="weekly")
+elif period=="6mo": 
+    history = stock.history(period="6mo", interval="weekly")
 else:
-     #Display company information
-    st.write(f"Company: {company}")
+    history = stock.history(period="1y", interval="monthly")
+history = stock.history(period=period)
+st.line_chart(history['Close'])
+
 
  #Display stock price history and key metrics
 if ticker:
