@@ -9,7 +9,8 @@ st.title("Stock Insight Dashboard")
 
 #Search functionality
 search = st.text_input("Search Company Name")
-
+info = None
+ticker = None
 matches = companies[
     companies["NAME OF COMPANY"].str.contains(search, case=False, na=False) | 
     companies["SYMBOL"].str.contains(search, case=False, na=False)
@@ -21,44 +22,28 @@ if not matches.empty:
    ticker = selected_row["SYMBOL"] + ".NS"
 if search and matches.empty:
     st.error("No matching company found. Please try a different search term.")
-if len(search) < 2:
+if search and len(search) < 2:
     st.warning("Please enter at least 2 characters to search.")
-stock = yf.Ticker(ticker)
-info = stock.info
-ticker = None
-st.subheader("Company Information")
-st.metric("Name", info.get('longName', 'N/A')) 
 
-#Stock History
-
-history = stock.history(period="1y")
-period = st.selectbox("Select Time Period", ["1d", "5d", "1mo", "3mo", "6mo", "1y"])
-if period=="1d":
-    history = stock.history(period="1d", interval="5m")
-elif period=="5d":
-    history = stock.history(period="5d", interval="1h")
-elif period=="1mo":
-    history = stock.history(period="1mo", interval="1d")
-elif period=="3mo":
-    history = stock.history(period="3mo", interval="weekly")
-elif period=="6mo": 
-    history = stock.history(period="6mo", interval="weekly")
-else:
-    history = stock.history(period="1y", interval="monthly")
-history = stock.history(period=period)
-st.line_chart(history['Close'])
-
-
+ 
  #Display stock price history and key metrics
 if ticker:
      stock = yf.Ticker(ticker)
      info = stock.info
      st.subheader("Stock Price History")
+     st.metric("Name", info.get('longName', 'N/A'))
      history = stock.history(period="1y")
      period = st.selectbox("Select Time Period", ["1d", "5d", "1mo", "3mo", "6mo", "1y"])
      history = stock.history(period=period)
      st.line_chart(history['Close'])
      market_cap = info.get('marketCap', 0)
+
+     # Display company overview
+     st.subheader("Company Information")
+     st.write(f"Sector: {info.get('sector', 'N/A')}")
+     st.write(f"Industry: {info.get('industry', 'N/A')}")
+     st.write(f"Description: {info.get('longBusinessSummary', 'N/A')}") 
+# Format market cap for better readability
      if market_cap >= 1_000_000_000_000:
          value = f"{market_cap / 1_000_000_000_000:.2f} Trillion"
      elif market_cap >= 1_000_000_000:
@@ -80,6 +65,7 @@ if ticker:
          st.metric("PE Ratio", f"{pe_ratio:.2f}" if (pe_ratio := info.get('trailingPE')) is not None else "N/A")
          st.metric("52 Week High", f"₹{info.get('fiftyTwoWeekHigh', 'N/A')}")
          st.metric("52 Week Low", f"₹{info.get('fiftyTwoWeekLow', 'N/A')}") 
+ 
 #STOCK COMPARISON
 st.header("Stock Comparison")
 tickers = st.multiselect("Select Stock Symbols to Compare", options=["RELIANCE", "TCS", "INFY", "HDFCBANK", "ICICIBANK"], default=["RELIANCE", "TCS"])
@@ -105,11 +91,7 @@ with investment_return_calculator:
         st.write(f"Effective Annual Return: {effective_annual_return:.2f}%")
     else:
         st.write("Enter the details and click 'Calculate' to see the results.")
-st.header("Company Overview")
-st.write(f"Company: {info.get('longName', 'N/A')}")
-st.write(f"Sector: {info.get('sector', 'N/A')}")
-st.write(f"Industry: {info.get('industry', 'N/A')}")
-st.write(f"Description: {info.get('longBusinessSummary', 'N/A')}")  
+
 
 
 
