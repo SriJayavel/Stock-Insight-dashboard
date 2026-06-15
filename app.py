@@ -9,29 +9,27 @@ st.title("Stock Insight Dashboard")
 
 #Search functionality
 search = st.text_input("Search Company Name")
+
 info = None
 ticker = None
-matches = companies[
-    companies["NAME OF COMPANY"].str.contains(search, case=False, na=False) | 
-    companies["SYMBOL"].str.contains(search, case=False, na=False)
-]
-if not matches.empty:
-   selected_company = st.selectbox("Select a Company",matches["NAME OF COMPANY"].head(10)
-   )
-   selected_row = matches[matches["NAME OF COMPANY"] == selected_company].iloc[0]
-   ticker = selected_row["SYMBOL"] + ".NS"
-
-if search and matches.empty:
-    st.error("No matching company found. Please try a different search term.")
-matchs = pd.DataFrame(matches)
+matches = pd.DataFrame()
 
 if search and len(search) >= 2:
     matches = companies[
-        companies["NAME OF COMPANY"].str.contains(search, case=False, na=False) | 
+        companies["NAME OF COMPANY"].str.contains(search, case=False, na=False)
+        | 
         companies["SYMBOL"].str.contains(search, case=False, na=False)
     ]
+
+    if not matches.empty:
+       selected_company = st.selectbox("Select a Company",matches["NAME OF COMPANY"].head(10)
+    )
+       selected_row = matches[matches["NAME OF COMPANY"] == selected_company].iloc[0]
+       ticker = selected_row["SYMBOL"] + ".NS"
+    else:
+        st.warning("No matching companies found.")
 elif search:
-    st.warning("Please enter at least 2 characters to search.")
+     st.warning("Please enter at least 2 characters to search.")
 
  
  #Display stock price history and key metrics
