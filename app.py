@@ -20,9 +20,17 @@ if not matches.empty:
    )
    selected_row = matches[matches["NAME OF COMPANY"] == selected_company].iloc[0]
    ticker = selected_row["SYMBOL"] + ".NS"
+
 if search and matches.empty:
     st.error("No matching company found. Please try a different search term.")
-if search and len(search) < 2:
+matchs = pd.DataFrame(matches)
+
+if search and len(search) >= 2:
+    matches = companies[
+        companies["NAME OF COMPANY"].str.contains(search, case=False, na=False) | 
+        companies["SYMBOL"].str.contains(search, case=False, na=False)
+    ]
+elif search:
     st.warning("Please enter at least 2 characters to search.")
 
  
@@ -30,9 +38,8 @@ if search and len(search) < 2:
 if ticker:
      stock = yf.Ticker(ticker)
      info = stock.info
+     st.metric("Company Name", info.get('longName', 'N/A'))     
      st.subheader("Stock Price History")
-     st.metric("Name", info.get('longName', 'N/A'))
-     history = stock.history(period="1y")
      period = st.selectbox("Select Time Period", ["1d", "5d", "1mo", "3mo", "6mo", "1y"])
      history = stock.history(period=period)
      st.line_chart(history['Close'])
