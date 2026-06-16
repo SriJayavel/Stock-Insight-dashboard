@@ -6,6 +6,7 @@ companies = pd.read_csv("companies.csv")
 # Set page configuration
 st.set_page_config(page_title="Stock Insight Dashboard", layout="wide")
 st.title("Stock Insight Dashboard")
+st.caption("Built by Jay")
 
 #Search functionality
 search = st.text_input("Search Company Name")
@@ -72,15 +73,25 @@ if ticker:
          st.metric("52 Week Low", f"₹{info.get('fiftyTwoWeekLow', 'N/A')}") 
  
 #STOCK COMPARISON
-st.header("Stock Comparison")
-tickers = st.multiselect("Select Stock Symbols to Compare", options=["RELIANCE", "TCS", "INFY", "HDFCBANK", "ICICIBANK"], default=["RELIANCE", "TCS"])
-if tickers:
-    data = yf.download([ticker + ".NS" for ticker in tickers], period="1y")['Close']
-    st.line_chart(data)
-    st.write("Selected Stocks: " + ", ".join(tickers))
-    st.write("Comparison of stock price trends over the past year.")
 
-    
+st.header("Stock Comparison")
+st.caption("Select multiple Indian stocks over the past year.")
+comparison_options = sorted(companies["NAME OF COMPANY"].dropna().unique().tolist())
+selected_companies = st.multiselect("Select Companies to Compare", options=comparison_options, default=comparison_options[:2])
+
+if selected_companies:
+    selected_tickers = []
+    for company in selected_companies:
+        row = companies[companies["NAME OF COMPANY"] == company]
+        if not row.empty:
+            ticker_symbol = row.iloc[0]["SYMBOL"] + ".NS"
+            selected_tickers.append(ticker_symbol)
+
+    if selected_tickers:
+        comparison_data = yf.download(selected_tickers, period="1y")['Close']
+        st.line_chart(comparison_data)
+    else:
+        st.warning("No valid tickers found for the selected companies.")
 
 #Investment Return Calculator
 investment_return_calculator = st.sidebar.expander("Investment Return Calculator")
