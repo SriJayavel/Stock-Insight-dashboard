@@ -1,6 +1,7 @@
 import streamlit as st
 import yfinance as yf
 import pandas as pd
+import plotly.graph_objects as go
 companies = pd.read_csv("companies.csv")
 
 # Set page configuration
@@ -39,17 +40,49 @@ if ticker:
      info = stock.info
      st.metric("Company Name", info.get('longName', 'N/A'))     
      st.subheader("Stock Price History")
-     period = st.selectbox("Select Time Period", ["1d", "5d", "1mo", "3mo", "6mo", "1y"])
-     history = stock.history(period=period)
-     st.line_chart(history['Close'])
-     market_cap = info.get('marketCap', 0)
+     period = st.selectbox(
+         "Select Time Period", 
+         ["1d", "5d", "1mo", "3mo", "6mo", "1y"])
+     
+     if period == "1d":
+         history = stock.history(period=period, interval="5m")
+     elif period in ["5d"]:
+         history = stock.history(period=period, interval="30m")
+     elif period in ["1mo"]:
+         history = stock.history(period=period, interval="1d")
+     elif period in ["3mo", "6mo", "1y"]:
+         history = stock.history(period=period)
 
-     # Display company overview
+     chart_type = st.selectbox(
+         "Select Chart Type",
+         ["Line Chart", "Candlestick Chart", "Area Chart"])
+     if chart_type == "Line Chart":
+         fig = go.Figure(data=go.Scatter(x=history.index, y=history['Close'], mode='lines', name='Close Price'))
+         fig.update_layout(title='Stock Price History', xaxis_title='Date', yaxis_title='Price (₹)')
+         st.plotly_chart(fig, use_container_width=True)
+     elif chart_type == "Candlestick Chart":
+         fig = go.Figure(data=[go.Candlestick(
+             x=history.index,
+             open=history['Open'],
+             high=history['High'],
+             low=history['Low'],
+             close=history['Close']
+         )])
+         fig.update_layout(xaxis_rangeslider_visible=False)
+         st.plotly_chart(fig, use_container_width=True)
+     elif chart_type == "Area Chart":
+         fig = go.Figure()
+         fig.add_trace(go.Scatter(x=history.index, y=history['Close'], fill='tozeroy', mode='none', name='Close Price'))
+         fig.update_layout(title='Stock Price History', xaxis_title='Date', yaxis_title='Price (₹)')
+         st.plotly_chart(fig, use_container_width=True)
+
+# Display company overview
      st.subheader("Company Information")
      st.write(f"Sector: {info.get('sector', 'N/A')}")
      st.write(f"Industry: {info.get('industry', 'N/A')}")
      st.write(f"Description: {info.get('longBusinessSummary', 'N/A')}") 
 # Format market cap for better readability
+     market_cap = info.get('marketCap', 0)
      if market_cap >= 1_000_000_000_000:
          value = f"{market_cap / 1_000_000_000_000:.2f} Trillion"
      elif market_cap >= 1_000_000_000:
