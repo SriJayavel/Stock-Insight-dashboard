@@ -42,7 +42,7 @@ if ticker:
      st.subheader("Stock Price History")
      period = st.selectbox(
          "Select Time Period", 
-         ["1d", "5d", "1mo", "3mo", "6mo", "1y"])
+         ["1d", "5d", "1mo", "3mo", "6mo", "1y", "2y", "5y", "10y", "ytd", "max"])
      
      if period == "1d":
          history = stock.history(period=period, interval="5m")
@@ -50,7 +50,7 @@ if ticker:
          history = stock.history(period=period, interval="30m")
      elif period in ["1mo"]:
          history = stock.history(period=period, interval="1d")
-     elif period in ["3mo", "6mo", "1y"]:
+     else:
          history = stock.history(period=period)
 
      chart_type = st.selectbox(
@@ -58,8 +58,7 @@ if ticker:
          ["Line Chart", "Candlestick Chart", "Area Chart"])
      if chart_type == "Line Chart":
          fig = go.Figure(data=go.Scatter(x=history.index, y=history['Close'], mode='lines', name='Close Price'))
-         fig.update_layout(title='Stock Price History', xaxis_title='Date', yaxis_title='Price (₹)')
-         st.plotly_chart(fig, use_container_width=True)
+         
      elif chart_type == "Candlestick Chart":
          fig = go.Figure(data=[go.Candlestick(
              x=history.index,
@@ -68,13 +67,21 @@ if ticker:
              low=history['Low'],
              close=history['Close']
          )])
-         fig.update_layout(xaxis_rangeslider_visible=False)
-         st.plotly_chart(fig, use_container_width=True)
+         
      elif chart_type == "Area Chart":
          fig = go.Figure()
          fig.add_trace(go.Scatter(x=history.index, y=history['Close'], fill='tozeroy', mode='none', name='Close Price'))
-         fig.update_layout(title='Stock Price History', xaxis_title='Date', yaxis_title='Price (₹)')
-         st.plotly_chart(fig, use_container_width=True)
+       
+     fig.update_layout(
+      title='Stock Price History',
+      xaxis_title='Date',
+      yaxis_title='Price (₹)',
+      height=650,
+      xaxis=dict(
+        rangeslider=dict(visible=True),
+        type='date')
+           )
+     st.plotly_chart(fig, use_container_width=True)
 
 # Display company overview
      st.subheader("Company Information")
