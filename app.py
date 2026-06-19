@@ -36,56 +36,11 @@ if ticker:
     with st.spinner(f"loading stock data for {selected_company}..."):
         stock = yf.Ticker(ticker)
         info = stock.info
-        st.metric("Company Name", info.get('longName', 'N/A'))     
-        st.subheader("Stock Price History")
-        period = st.selectbox(
-         "Select Time Period", 
-         ["1d", "5d", "1mo", "3mo", "6mo", "1y", "2y", "5y", "10y", "ytd", "max"])
-     
-        if period == "1d":
-            history = stock.history(period=period, interval="5m")
-        elif period in ["5d"]:
-            history = stock.history(period=period, interval="30m")
-        elif period in ["1mo"]:
-            history = stock.history(period=period, interval="1d")
-        else:
-            history = stock.history(period=period)
-
-        chart_type = st.selectbox(
-            "Select Chart Type",
-            ["Line Chart", "Candlestick Chart", "Area Chart"])
-        if chart_type == "Line Chart":
-            fig = go.Figure(data=go.Scatter(x=history.index, y=history['Close'], mode='lines', name='Close Price'))
-            
-        elif chart_type == "Candlestick Chart":
-            fig = go.Figure(data=[go.Candlestick(
-                x=history.index,
-                open=history['Open'],
-                high=history['High'],
-                low=history['Low'],
-                close=history['Close']
-            )])
-            
-        elif chart_type == "Area Chart":
-            fig = go.Figure()
-            fig.add_trace(go.Scatter(x=history.index, y=history['Close'], fill='tozeroy', mode='none', name='Close Price'))
-        
-        fig.update_layout(
-        title='Stock Price History',
-        xaxis_title='Date',
-        yaxis_title='Price (₹)',
-        height=650,
-        xaxis=dict(
-            rangeslider=dict(visible=True),
-            type='date')
-            )
-        st.plotly_chart(fig, use_container_width=True)
-
-# Display company overview
-        st.subheader("Company Information")
-        st.write(f"Sector: {info.get('sector', 'N/A')}")
-        st.write(f"Industry: {info.get('industry', 'N/A')}")
-        st.write(f"Description: {info.get('longBusinessSummary', 'N/A')}") 
+        st.caption("Company Name:")
+        st.title(info.get('longName', 'N/A'))  
+        st.caption(
+    f"{info.get('sector')} • {info.get('industry')}"
+)
 # Format market cap for better readability
         market_cap = info.get('marketCap', 0)
         if market_cap >= 1_000_000_000_000:
@@ -95,20 +50,96 @@ if ticker:
         elif market_cap >= 1_000_000:
             value = f"{market_cap / 1_000_000:.2f} Million"
         else:
-            value = f"{market_cap}"
+            value = f"{market_cap}" 
+#COMPANY MATRICS
+        st.subheader("Company Status")
+    col1, col2, col3 = st.columns(3)
 
-        st.subheader("Key Metrics")
-        col1, col2, col3 = st.columns(3)
-        with col1:
-            st.metric("Current Price", f"₹{info.get('currentPrice', 'N/A')}")
+    with col1:
+        with st.container(border=True):
+             previous_close = info.get("previousClose")
+             current_price = info.get("currentPrice")
+             change = current_price - previous_close
+             st.metric(
+                 "Current Price",
+                 f"₹{current_price}",
+                 f"{change:.2f}"
+            )
+
+        with st.container(border=True):
             st.metric("Market Cap", f"₹{value}")
-        with col2:
-            st.metric("Day High", f"₹{info.get('dayHigh', 'N/A')}")
-            st.metric("Day Low", f"₹{info.get('dayLow', 'N/A')}") 
-        with col3:
-            st.metric("PE Ratio", f"{pe_ratio:.2f}" if (pe_ratio := info.get('trailingPE')) is not None else "N/A")
-            st.metric("52 Week High", f"₹{info.get('fiftyTwoWeekHigh', 'N/A')}")
-            st.metric("52 Week Low", f"₹{info.get('fiftyTwoWeekLow', 'N/A')}") 
+
+    with col2:
+        with st.container(border=True):
+            st.metric("Day High", f"₹{info.get('dayHigh')}")
+
+        with st.container(border=True):
+            st.metric("Day Low", f"₹{info.get('dayLow')}")
+
+    with col3:
+        with st.container(border=True):
+                pe_ratio = info.get("trailingPE")
+                st.metric("PE Ratio", pe_ratio)
+
+        with st.container(border=True):
+            st.metric(
+                "52 Week High",
+                f"₹{info.get('fiftyTwoWeekHigh')}"
+            ) 
+             
+#STOCK HISTORY
+    st.subheader("Stock Price History")
+    period = st.selectbox(
+     "Select Time Period", 
+      ["1d", "5d", "1mo", "3mo", "6mo", "1y", "2y", "5y", "10y", "ytd", "max"])
+    
+    if period == "1d":
+         history = stock.history(period=period, interval="5m")
+    elif period in ["5d"]:
+         history = stock.history(period=period, interval="30m")
+    elif period in ["1mo"]:
+         history = stock.history(period=period, interval="1d")
+    else:
+         history = stock.history(period=period)
+#CHART SECTION
+    chart_type = st.selectbox(
+        "Select Chart Type",
+        ["Line Chart", "Candlestick Chart", "Area Chart"])
+    if chart_type == "Line Chart":
+        fig = go.Figure(data=go.Scatter(x=history.index, y=history['Close'], mode='lines', name='Close Price'))
+        
+    elif chart_type == "Candlestick Chart":
+        fig = go.Figure(data=[go.Candlestick(
+            x=history.index,
+            open=history['Open'],
+            high=history['High'],
+            low=history['Low'],
+            close=history['Close']
+        )])
+            
+    elif chart_type == "Area Chart":
+        fig = go.Figure()
+        fig.add_trace(go.Scatter(x=history.index, y=history['Close'], fill='tozeroy', mode='none', name='Close Price'))
+    
+    fig.update_layout(
+       title='Stock Price History',
+       xaxis_title='Date',
+        yaxis_title='Price (₹)',
+        height=750,
+        xaxis=dict(
+        rangeslider=dict(visible=True),
+        type='date')
+        )
+    st.plotly_chart(fig, use_container_width=True)
+
+# Display company overview
+with st.expander("Company Information"):
+    st.write(f"Sector: {info.get('sector')}")
+    st.write(f"Industry: {info.get('industry')}")
+    st.write(f"Description: {info.get('longBusinessSummary')}")
+
+
+ 
 if not ticker:
   st.info("Search for a indian stock by company to begin exploring Stock Insight.")
 #STOCK COMPARISON
@@ -151,7 +182,7 @@ st.divider()
 st.caption(   
      "Stock Insight Dashboard | Built by Sri Jayavel"
 )
-
+            
 
 
 
