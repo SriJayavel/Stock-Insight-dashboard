@@ -86,7 +86,7 @@ if ticker:
                 "52 Week High",
                 f"₹{info.get('fiftyTwoWeekHigh')}"
             ) 
-             
+    st.divider()        
 #STOCK HISTORY
     st.subheader("Stock Price History")
     period = st.selectbox(
@@ -131,17 +131,16 @@ if ticker:
         type='date')
         )
     st.plotly_chart(fig, use_container_width=True)
-
 # Display company overview
 with st.expander("Company Information"):
     st.write(f"Sector: {info.get('sector')}")
     st.write(f"Industry: {info.get('industry')}")
     st.write(f"Description: {info.get('longBusinessSummary')}")
 
-
  
 if not ticker:
   st.info("Search for a indian stock by company to begin exploring Stock Insight.")
+
 #STOCK COMPARISON
 
 st.header("Stock Comparison")
