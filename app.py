@@ -8,6 +8,21 @@ companies = pd.read_csv("companies.csv")
 st.set_page_config(page_title="Stock Insight Dashboard", layout="wide")
 st.title("Stock Insight Dashboard")
 
+#Watch List
+with st.sidebar.expander(" Watchlist"):
+
+    selected_watch = st.selectbox(
+        "Quick Access",
+        ["Select a stock", "RELIANCE", "TCS", "INFY"]
+    )
+
+if selected_watch != "Select a stock":
+    st.session_state["search"] = selected_watch
+
+search = st.text_input(
+    "Search Company Name",
+    key="search"
+)
 #Search functionality
 search = st.text_input("Search Company Name")
 
