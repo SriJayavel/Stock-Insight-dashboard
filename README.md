@@ -72,4 +72,9 @@ Stock-Insight-dashboard/
 - publish it in web as Verson 1
 
 ## Project Status
-ALmost Complete 
+
+✅ Version 1 Completed
+
+This project was built to practice data visualization, financial data analysis, and dashboard development using Streamlit.
+
+Future improvements may be added in later versions.
