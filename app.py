@@ -132,10 +132,10 @@ if ticker:
         )
     st.plotly_chart(fig, use_container_width=True)
 # Display company overview
-with st.expander("Company Information"):
-    st.write(f"Sector: {info.get('sector')}")
-    st.write(f"Industry: {info.get('industry')}")
-    st.write(f"Description: {info.get('longBusinessSummary')}")
+    with st.expander("Company Information"):
+      st.write(f"Sector: {info.get('sector')}")
+      st.write(f"Industry: {info.get('industry')}")
+      st.write(f"Description: {info.get('longBusinessSummary')}")
 
  
 if not ticker:
