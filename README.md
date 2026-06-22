@@ -72,4 +72,4 @@ Stock-Insight-dashboard/
 - publish it in web as Verson 1
 
 ## Project Status
-ALmost Complete and 
+ALmost Complete 
