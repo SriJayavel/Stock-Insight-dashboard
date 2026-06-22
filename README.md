@@ -49,12 +49,18 @@ A Streamlit-based dashboard that allows users to search Indian stocks, analyze m
 
 ## 📂 Project Structure
 Stock-Insight-dashboard/
+│
+├── app.py
+├── companies.csv
+├── requirements.txt
+├── README.md
+└── Screenshots/
+    ├── Mainpage.png
+    ├── StockHistory.png
+    ├── matrix_keys.png
+    ├── Multi-compare-stock.png
+    └── overview-comp.png
 
-│── app.py
-│── companies.csv
-│── requirements.txt
-│── README.md
-│── Screenshots/
 
 ## Future Improvements
 - Seach bar suggestion
