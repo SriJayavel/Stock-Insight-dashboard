@@ -48,6 +48,7 @@ A Streamlit-based dashboard that allows users to search Indian stocks, analyze m
 - streamlit run app.py
 
 ## 📂 Project Structure
+```text
 Stock-Insight-dashboard/
 │
 ├── app.py
@@ -60,6 +61,7 @@ Stock-Insight-dashboard/
     ├── matrix_keys.png
     ├── Multi-compare-stock.png
     └── overview-comp.png
+```
 
 
 ## Future Improvements
