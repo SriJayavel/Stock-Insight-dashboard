@@ -71,10 +71,19 @@ if ticker:
 
     with col2:
         with st.container(border=True):
-            st.metric("Day High", f"₹{info.get('dayHigh')}")
-
+            day_high = info.get("dayHigh")
+            st.metric(
+                "Day High",
+                f"₹{day_high}",
+                f"{day_high - previous_close:.2f}"
+            )
         with st.container(border=True):
-            st.metric("Day Low", f"₹{info.get('dayLow')}")
+            day_low = info.get("dayLow")
+            st.metric(
+                "Day Low",
+                f"₹{day_low}",
+                f"{day_low - previous_close:.2f}"
+            )
 
     with col3:
         with st.container(border=True):
@@ -82,10 +91,12 @@ if ticker:
                 st.metric("PE Ratio", pe_ratio)
 
         with st.container(border=True):
+            week_high = info.get("fiftyTwoWeekHigh")
             st.metric(
                 "52 Week High",
-                f"₹{info.get('fiftyTwoWeekHigh')}"
-            ) 
+                f"₹{week_high}",
+                f"{week_high - current_price:.2f}"
+            )   
     st.divider()        
 #STOCK HISTORY
     st.subheader("Stock Price History")
