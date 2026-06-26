@@ -63,13 +63,7 @@ Stock-Insight-dashboard/
     └── overview-comp.png
 ```
 
-
-## Future Improvements
-- Seach bar suggestion
-- Better UI
-- BETTER UX 
-- User friendly improvement
-- publish it in web as Verson 1
+Version 1 complete
 
 ## Project Status
 
